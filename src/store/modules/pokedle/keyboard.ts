@@ -21,13 +21,15 @@ const LETTERS_EXTRA = [
   ["ォ", "ゴ", "ゾ", "ド", "", "ボ", "ポ", "ョ", "", "Ｚ"],
 ];
 
+const COLOR_LIST = ["white", "amber", "green"];
+
 interface KeyboardState {
   /** キーボードの表示モード（通常50音/その他） */
   mode: string;
   /** 表示中のキーボード表示文字リスト */
   letters: string[][];
   /** 入力中文字列 */
-  typingLetters: string[];
+  typingLetters: Record<string, string>[];
 }
 
 class KeyboardModule implements Module<KeyboardState, any> {
@@ -55,7 +57,10 @@ class KeyboardModule implements Module<KeyboardState, any> {
      * @param charactor 押されたキー
      */
     push(state: KeyboardState, charactor: string) {
-      state.typingLetters.push(charactor);
+      state.typingLetters.push({
+        letter: charactor,
+        color: "white",
+      });
     },
     /**
      * 入力中文字列から1文字削除する（バックスペース）
@@ -81,6 +86,13 @@ class KeyboardModule implements Module<KeyboardState, any> {
           : state.mode == "extra"
           ? LETTERS_EXTRA
           : [];
+    },
+    changeColor(state: KeyboardState, index: number) {
+      if (state.typingLetters[index]) {
+        const now = COLOR_LIST.indexOf(state.typingLetters[index].color);
+        state.typingLetters[index].color =
+          COLOR_LIST[(now + 1) % COLOR_LIST.length];
+      }
     },
   };
 }

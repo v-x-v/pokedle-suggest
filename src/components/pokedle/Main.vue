@@ -6,7 +6,7 @@
           <v-container fill-height fluid>
             <v-row>
               <v-col v-for="i in 2" :key="'col-' + i" cols="6">
-                <v-row v-for="j in 6" :key="'row-' + i + '-' + j" no-gutters>
+                <v-row v-for="j in 6" :key="'row-' + i + '-' + j">
                   <v-col
                     v-for="k in 5"
                     :key="'cell-' + i + '-' + j + '-' + k"
@@ -14,9 +14,16 @@
                     class="mx-0 pa-1"
                   >
                     <v-responsive :aspect-ratio="1">
-                      <v-card outlined class="history__card">
+                      <v-card
+                        outlined
+                        class="history__card"
+                        @click="changeColor(i - 1, j - 1, k - 1)"
+                      >
                         <v-card-text
-                          class="history__cell px-auto"
+                          :class="
+                            'history__cell px-auto ' +
+                            displayColor(i - 1, j - 1, k - 1)
+                          "
                           v-text="displayText(i - 1, j - 1, k - 1)"
                         ></v-card-text>
                       </v-card>
@@ -39,18 +46,43 @@ import { Component, Vue } from "vue-property-decorator";
 import store from "@/store";
 @Component
 export default class PokedleMain extends Vue {
-  list = [];
   /**
    * 入力済み文字列リスト
    */
-  get registeredList(): string[][] {
+  get registeredList(): Record<string, unknown>[][] {
     return this.$store.state.app.registeredList;
   }
   /**
    * 入力中文字列
    */
-  get typingLetters(): string[] {
+  get typingLetters(): Record<string, unknown>[] {
     return this.$store.state.keyboard.typingLetters;
+  }
+  changeColor(col: number, row: number, cell: number) {
+    if (this.registeredList[col * 5 + row] !== undefined) {
+      return;
+    } else {
+      if (this.registeredList.length === col * 5 + row) {
+        if (this.typingLetters[cell]) {
+          store.commit("keyboard/changeColor", cell);
+        }
+      }
+    }
+    return;
+  }
+  displayColor(col: number, row: number, cell: number) {
+    if (this.registeredList[col * 5 + row] !== undefined) {
+      return this.registeredList[col * 5 + row][cell].color;
+    } else {
+      if (this.registeredList.length === col * 5 + row) {
+        if (this.typingLetters[cell]) {
+          return this.typingLetters[cell].color;
+        } else {
+          return "white";
+        }
+      }
+    }
+    return "white";
   }
   /**
    * 表示文字を取得する
@@ -61,11 +93,11 @@ export default class PokedleMain extends Vue {
    */
   displayText(col: number, row: number, cell: number) {
     if (this.registeredList[col * 5 + row] !== undefined) {
-      return this.registeredList[col * 5 + row][cell];
+      return this.registeredList[col * 5 + row][cell].letter;
     } else {
       if (this.registeredList.length === col * 5 + row) {
         if (this.typingLetters[cell]) {
-          return this.typingLetters[cell];
+          return this.typingLetters[cell].letter;
         } else {
           return "　";
         }

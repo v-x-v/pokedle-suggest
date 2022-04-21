@@ -6,7 +6,7 @@ Vue.use(Vuex);
 
 interface AppState {
   /** 入力済み文字列リスト */
-  registeredList: string[][];
+  registeredList: Record<string, string>[][];
 }
 
 class AppModule implements Module<AppState, any> {
@@ -21,7 +21,7 @@ class AppModule implements Module<AppState, any> {
      * @param state
      * @param letter 入力中文字列(1文字ずつ分割されたリスト)
      */
-    register(state: AppState, letter: string[]) {
+    register(state: AppState, letter: Record<string, string>[]) {
       // 入力中配列をコピーしてから追加
       const item = letter.slice();
       state.registeredList.push(item);
