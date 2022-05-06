@@ -4,8 +4,11 @@
       <v-col id="history" cols="8">
         <v-card class="mx-auto mt-4 pt-md-0 mb-6">
           <v-container fill-height fluid>
+            <v-toolbar flat>
+              <v-toolbar-title>入力履歴</v-toolbar-title>
+            </v-toolbar>
             <v-row>
-              <v-col v-for="i in 2" :key="'col-' + i" cols="6">
+              <v-col v-for="i in 2" :key="'col-' + i" cols="6" class="bordered">
                 <v-row v-for="j in 6" :key="'row-' + i + '-' + j">
                   <v-col
                     v-for="k in 5"
@@ -16,14 +19,13 @@
                     <v-responsive :aspect-ratio="1">
                       <v-card
                         outlined
-                        class="history__card"
+                        :class="
+                          'history__card ' + displayColor(i - 1, j - 1, k - 1)
+                        "
                         @click="changeColor(i - 1, j - 1, k - 1)"
                       >
                         <v-card-text
-                          :class="
-                            'history__cell px-auto ' +
-                            displayColor(i - 1, j - 1, k - 1)
-                          "
+                          :class="'history__cell px-auto '"
                           v-text="displayText(i - 1, j - 1, k - 1)"
                         ></v-card-text>
                       </v-card>
@@ -36,7 +38,26 @@
         </v-card>
       </v-col>
       <v-col id="suggestion" cols="4">
-        <v-card class="mx-auto mt-4 pt-md-4 mb-6"> </v-card>
+        <v-card class="mx-auto mt-4 pt-md-4 mb-6">
+          <v-card-title>
+            予測リスト
+            <v-spacer></v-spacer>
+            <v-text-field
+              v-model="search"
+              append-icon="mdi-magnify"
+              label="Search"
+              single-line
+              hide-details
+            ></v-text-field>
+          </v-card-title>
+          <v-data-table
+            :items-per-page="6"
+            :headers="headers"
+            :search="search"
+            :items="suggestList"
+            item-key="name"
+          />
+        </v-card>
       </v-col>
     </v-row>
   </v-container>
@@ -46,6 +67,8 @@ import { Component, Vue } from "vue-property-decorator";
 import store from "@/store";
 @Component
 export default class PokedleMain extends Vue {
+  headers = [{ text: "Name", value: "name" }];
+  search = "";
   /**
    * 入力済み文字列リスト
    */
@@ -53,10 +76,19 @@ export default class PokedleMain extends Vue {
     return this.$store.state.app.registeredList;
   }
   /**
+   * 推測リスト
+   */
+  get suggestList(): Record<string, any>[] {
+    return this.$store.state.app.suggestList;
+  }
+  /**
    * 入力中文字列
    */
   get typingLetters(): Record<string, unknown>[] {
     return this.$store.state.keyboard.typingLetters;
+  }
+  created() {
+    this.$store.dispatch("app/initNameList");
   }
   changeColor(col: number, row: number, cell: number) {
     if (this.registeredList[col * 5 + row] !== undefined) {
@@ -71,18 +103,25 @@ export default class PokedleMain extends Vue {
     return;
   }
   displayColor(col: number, row: number, cell: number) {
-    if (this.registeredList[col * 5 + row] !== undefined) {
-      return this.registeredList[col * 5 + row][cell].color;
+    const addr = col * 5 + row;
+    if (this.registeredList.length > addr) {
+      // 入力済みのものがあれば優先的に表示
+      if (this.registeredList[addr].length > cell) {
+        return this.registeredList[addr][cell].color === ""
+          ? "grey"
+          : this.registeredList[addr][cell].color;
+      }
     } else {
-      if (this.registeredList.length === col * 5 + row) {
+      // 入力中のものは入力済みの後に表示
+      if (this.registeredList.length === addr) {
         if (this.typingLetters[cell]) {
           return this.typingLetters[cell].color;
         } else {
-          return "white";
+          return "";
         }
       }
     }
-    return "white";
+    return "";
   }
   /**
    * 表示文字を取得する
@@ -92,10 +131,13 @@ export default class PokedleMain extends Vue {
    * @returns 入力済み or 入力中文字
    */
   displayText(col: number, row: number, cell: number) {
-    if (this.registeredList[col * 5 + row] !== undefined) {
-      return this.registeredList[col * 5 + row][cell].letter;
+    const addr = col * 5 + row;
+    if (this.registeredList.length > addr) {
+      if (this.registeredList[addr].length > cell) {
+        return this.registeredList[addr][cell].letter;
+      }
     } else {
-      if (this.registeredList.length === col * 5 + row) {
+      if (this.registeredList.length === addr) {
         if (this.typingLetters[cell]) {
           return this.typingLetters[cell].letter;
         } else {
@@ -125,6 +167,9 @@ export default class PokedleMain extends Vue {
     top: 50%;
     left: 50%;
     transform: translateY(-50%) translateX(-50%);
+  }
+  .bordered {
+    border: solid 1px rgba(0, 0, 0, 0.12);
   }
 }
 </style>

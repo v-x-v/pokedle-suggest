@@ -21,7 +21,7 @@ const LETTERS_EXTRA = [
   ["ォ", "ゴ", "ゾ", "ド", "", "ボ", "ポ", "ョ", "", "Ｚ"],
 ];
 
-const COLOR_LIST = ["white", "amber", "green"];
+const COLOR_LIST = ["", "amber", "green"];
 
 interface KeyboardState {
   /** キーボードの表示モード（通常50音/その他） */
@@ -59,7 +59,7 @@ class KeyboardModule implements Module<KeyboardState, any> {
     push(state: KeyboardState, charactor: string) {
       state.typingLetters.push({
         letter: charactor,
-        color: "white",
+        color: "",
       });
     },
     /**

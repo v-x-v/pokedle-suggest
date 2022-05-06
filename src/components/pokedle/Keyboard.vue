@@ -29,7 +29,6 @@
       </v-row>
     </v-container>
     <v-container class="keyboard__main">
-      <div>{{ typingLetters.join("") }}</div>
       <v-row
         class="mx-1"
         v-for="(item, index_row) in letters"
@@ -61,6 +60,10 @@
         <v-spacer />
       </v-row>
     </v-container>
+    <v-snackbar v-model="isAlert" color="red accent-2">
+      {{ alertMessage }}
+      <v-btn text @click="isAlert = false"> Close </v-btn>
+    </v-snackbar>
   </v-card>
 </template>
 
@@ -70,6 +73,9 @@ import store from "@/store";
 
 @Component
 export default class Keyboard extends Vue {
+  // アラートバーが表示されているか
+  isAlert = false;
+  alertMessage = "";
   /**
    * キーボードの表示モード（通常50音/その他）
    */
@@ -85,7 +91,7 @@ export default class Keyboard extends Vue {
   /**
    * 入力中文字列
    */
-  get typingLetters(): string[] {
+  get typingLetters(): Record<string, string>[] {
     return this.$store.state.keyboard.typingLetters;
   }
   /**
@@ -114,9 +120,12 @@ export default class Keyboard extends Vue {
    * 入力中の文字を入力済み文字列リストに登録する
    */
   enter() {
-    if (this.typingLetters.length > 0) {
-      store.commit("app/register", this.typingLetters);
+    if (store.getters["app/isValidName"](this.typingLetters)) {
+      store.dispatch("app/register", this.typingLetters);
       store.commit("keyboard/clear");
+    } else {
+      this.alertMessage = "入力された名前はリストに含まれていません。";
+      this.isAlert = true;
     }
   }
   created() {
