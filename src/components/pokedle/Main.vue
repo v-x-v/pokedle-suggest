@@ -1,22 +1,27 @@
 <template>
   <v-container id="main-panel">
     <v-row>
-      <v-col id="history" cols="6">
-        <v-card class="mx-auto mt-4 pt-md-0 mb-6">
-          <v-container fill-height fluid>
+      <v-col id="history" cols="6" class="mb-0 pb-0">
+        <v-card class="mx-auto mt-4 pt-md-0 mb-0">
+          <v-container fill-height fluid class="pt-0">
             <v-toolbar flat color="transparent">
-              <v-toolbar-title>入力履歴</v-toolbar-title>
+              <v-toolbar-title class="text-body-1">入力履歴</v-toolbar-title>
               <v-spacer />
               <v-btn color="secondary" @click="reset()">Reset</v-btn>
             </v-toolbar>
             <v-row>
-              <v-col v-for="i in 2" :key="'col-' + i" cols="6" class="bordered">
+              <v-col
+                v-for="i in 2"
+                :key="'col-' + i"
+                cols="6"
+                class="bordered pb-0"
+              >
                 <v-row
                   v-for="j in 6"
                   :key="'row-' + i + '-' + j"
                   dense
                   no-gutters
-                  class="mx-1 py-1 flex-nowrap"
+                  class="mx-1 py-0 flex-nowrap"
                 >
                   <v-col
                     v-for="k in 5"
@@ -46,37 +51,36 @@
           </v-container>
         </v-card>
       </v-col>
-      <v-col id="suggestion" cols="3">
-        <v-card class="mx-auto mt-4 pt-md-4 mb-6">
-          <v-card-title>
-            予測リスト
-            <v-spacer></v-spacer>
-            <v-text-field
-              v-model="search"
-              append-icon="mdi-magnify"
-              label="Search"
-              single-line
-              hide-details
-            ></v-text-field>
-          </v-card-title>
+      <v-col id="suggestion" cols="3" class="pb-0">
+        <v-card class="mx-auto mt-4 mb-6">
+          <v-toolbar dense flat color="transparent">
+            <v-toolbar-title class="text-body-1">
+              予測リスト
+              <v-spacer></v-spacer>
+            </v-toolbar-title>
+          </v-toolbar>
           <v-data-table
+            dense
             :items-per-page="6"
             sort-by="score"
             :sort-desc="true"
             :headers="suggestHeaders"
-            :search="search"
             :items="suggestList"
             item-key="name"
+            disable-items-per-page
           />
         </v-card>
       </v-col>
-      <v-col cols="3">
-        <v-card class="mx-auto mt-4 pt-md-4 mb-6">
-          <v-card-title>
-            単語分布
-            <v-spacer></v-spacer>
-          </v-card-title>
+      <v-col cols="3" class="pb-0">
+        <v-card class="mx-auto mt-4 mb-6">
+          <v-toolbar dense flat color="transparent">
+            <v-toolbar-title class="text-body-1">
+              単語分布
+              <v-spacer></v-spacer>
+            </v-toolbar-title>
+          </v-toolbar>
           <v-data-table
+            dense
             :items-per-page="6"
             sort-by="count"
             :sort-desc="true"
@@ -101,7 +105,6 @@ export default class PokedleMain extends Vue {
     { text: "Charactor", value: "char" },
     { text: "Count", value: "count" },
   ];
-  search = "";
   /**
    * 入力済み文字列リスト
    */
@@ -189,23 +192,25 @@ export default class PokedleMain extends Vue {
 }
 </script>
 <style scoped lang="scss">
-#history {
-  .history__card {
-    width: 90%;
-    height: 90%;
-  }
-  .history__cell {
-    font-weight: 700;
-    font-size: large;
-    text-align: center;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    margin-right: -50%;
-    transform: translateY(-50%) translateX(-50%);
-  }
-  .bordered {
-    border: solid 2px rgba(0, 0, 0, 0.12);
+#main-panel {
+  #history {
+    .history__card {
+      width: 90%;
+      height: 90%;
+    }
+    .history__cell {
+      font-weight: 700;
+      font-size: large;
+      text-align: center;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      margin-right: -50%;
+      transform: translateY(-50%) translateX(-50%);
+    }
+    .bordered {
+      border: solid 2px rgba(0, 0, 0, 0.12);
+    }
   }
 }
 </style>

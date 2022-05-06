@@ -1,5 +1,5 @@
 <template>
-  <v-card id="keyboard" class="mx-auto mt-4 pt-md-4 mb-6">
+  <v-card id="keyboard" class="mx-auto mt-0 pt-md-0 mb-6">
     <v-container class="keyboard__tooltips">
       <v-row class="mx-1" no-gutters>
         <v-col class="pa-0">
