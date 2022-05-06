@@ -174,7 +174,10 @@ class AppModule implements Module<AppState, any> {
       // 黄色リストの文字を含み、位置違いのポケモン名のみ抽出
       state.yellowList.forEach((row) => {
         tmpList = tmpList.filter((item) => {
-          return item.name.charAt(row.index) !== row.letter;
+          return (
+            item.name.charAt(row.index) !== row.letter &&
+            item.name.indexOf(row.letter) !== -1
+          );
         });
       });
       state.suggestList = tmpList.slice();
