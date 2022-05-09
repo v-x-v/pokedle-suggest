@@ -1,6 +1,6 @@
 import Vue from "vue";
 import Vuex from "vuex";
-import { Store, Module, ActionContext } from "vuex";
+import { Module, ActionContext } from "vuex";
 
 Vue.use(Vuex);
 

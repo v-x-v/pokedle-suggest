@@ -1,10 +1,8 @@
 import Vue from "vue";
 import Vuex from "vuex";
-import { Store, Module, ActionContext } from "vuex";
+import { Module, ActionContext } from "vuex";
 import listJSON from "@/assets/json/daipa_list.json";
 import listFullJSON from "@/assets/json/daipa_list_full.json";
-import { AppContext, ssrContextKey } from "@vue/runtime-core";
-import keyboardModule from "./keyboard";
 
 Vue.use(Vuex);
 

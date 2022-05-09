@@ -1,5 +1,5 @@
 import Vue from "vue";
-import Vuex, { Store } from "vuex";
+import Vuex from "vuex";
 import app from "./modules/pokedle/app";
 import keyboard from "./modules/pokedle/keyboard";
 

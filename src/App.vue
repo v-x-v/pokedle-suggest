@@ -14,6 +14,8 @@
           :key="menuItem.link"
           link
           :href="menuItem.link"
+          :input-value="currentURL === menuItem.link ? true : false"
+          :color="currentURL === menuItem.link ? 'grey darken-2' : ''"
         >
           <v-list-item-icon>
             <v-icon v-text="menuItem.icon"></v-icon>
@@ -36,10 +38,13 @@ import { Component, Vue } from "vue-property-decorator";
 import store from "./store";
 @Component
 export default class App extends Vue {
-  get menuItems() {
+  get currentURL(): string {
+    return this.$route.path;
+  }
+  get menuItems(): Record<string, string>[] {
     return [
-      { icon: "mdi-star", link: "/", name: "home" },
-      { icon: "mdi-start", link: "/pokedle", name: "pokedle" },
+      { icon: "mdi-home", link: "/", name: "home" },
+      { icon: "mdi-chart-line", link: "/pokedle", name: "pokedle" },
     ];
   }
   click() {
