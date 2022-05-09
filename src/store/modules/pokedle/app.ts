@@ -3,6 +3,12 @@ import Vuex from "vuex";
 import { Module, ActionContext } from "vuex";
 import listJSON from "@/assets/json/daipa_list.json";
 import listFullJSON from "@/assets/json/daipa_list_full.json";
+import {
+  LetterColor,
+  LetterCount,
+  LetterIndex,
+  PokeJson,
+} from "@/types/pokedle";
 
 Vue.use(Vuex);
 
@@ -12,20 +18,20 @@ interface AppState {
   /** 全対象ポケモン名リスト（5文字以下含む） */
   fullNameList: string[];
   /** 現在の推測結果 */
-  suggestList: Record<string, any>[];
+  suggestList: PokeJson[];
   /** 現在の単語分布 */
-  charList: Record<string, any>[];
+  charList: LetterCount[];
   /** 緑文字、位置リスト */
-  greenList: Record<string, any>[];
+  greenList: LetterIndex[];
   /** 黄色文字、位置リスト */
-  yellowList: Record<string, any>[];
+  yellowList: LetterIndex[];
   /** 灰色文字リスト */
   greyList: string[];
 }
 
 class AppModule implements Module<AppState, any> {
   namespaced = true;
-  state = {
+  state: AppState = {
     registeredList: [],
     fullNameList: [],
     suggestList: [],
@@ -35,14 +41,14 @@ class AppModule implements Module<AppState, any> {
     greyList: [],
   };
   getters = {
-    isValidName:
-      (state: AppState) => (typingLetters: Record<string, string>[]) => {
-        if (typingLetters.length <= 0) {
-          return false;
-        }
-        const target = typingLetters.map((item) => item.letter).join("");
-        return state.fullNameList.includes(target);
-      },
+    /** 入力された名前が正しいポケモン名かどうか判定する */
+    isValidName: (state: AppState) => (typingLetters: LetterColor[]) => {
+      if (typingLetters.length <= 0) {
+        return false;
+      }
+      const target = typingLetters.map((item) => item.letter).join("");
+      return state.fullNameList.includes(target);
+    },
   };
   actions = {
     /**
@@ -89,7 +95,7 @@ class AppModule implements Module<AppState, any> {
           new Set((suggest.name as string).split(""))
         );
         uniqueSuggestList.forEach((c) => {
-          const char = state.charList.find((item) => item.char === c);
+          const char = state.charList.find((item) => item.letter === c);
           if (char === undefined) return;
           score += char.count;
         });
@@ -137,13 +143,13 @@ class AppModule implements Module<AppState, any> {
      * @param state
      */
     analysisWord(state: AppState) {
-      const tmpList: Record<string, any>[] = [];
+      const tmpList: LetterCount[] = [];
       state.suggestList.map((suggestItem) => {
         suggestItem.name.split("").forEach((c: string) => {
-          let index = tmpList.findIndex((tempItem) => tempItem.char === c);
+          let index = tmpList.findIndex((tempItem) => tempItem.letter === c);
           if (index === -1) {
-            tmpList.push({ char: c, count: 0 });
-            index = tmpList.findIndex((tempItem) => tempItem.char === c);
+            tmpList.push({ letter: c, count: 0 });
+            index = tmpList.findIndex((tempItem) => tempItem.letter === c);
           }
           tmpList[index].count++;
         });

@@ -17,7 +17,10 @@
           :color="currentURL === menuItem.path ? 'grey darken-2' : ''"
         >
           <v-list-item-icon>
-            <v-icon v-text="menuItem.meta.icon"></v-icon>
+            <v-icon
+              v-if="menuItem.meta !== undefined"
+              v-text="menuItem.meta.icon"
+            ></v-icon>
           </v-list-item-icon>
           <v-list-item-action-text
             v-text="menuItem.name"
@@ -33,9 +36,10 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch } from "vue-property-decorator";
+import { Component, Vue } from "vue-property-decorator";
 import store from "./store";
 import routes from "@/router/routes";
+import { RouteConfig } from "vue-router";
 
 @Component
 export default class App extends Vue {
@@ -45,17 +49,13 @@ export default class App extends Vue {
   get currentURL(): string {
     return this.$route.path;
   }
-  get menuItems(): Record<string, any>[] {
+  get menuItems(): Array<RouteConfig> {
     return routes;
   }
   click() {
     store.commit("app/switchDrawer");
   }
   mounted() {
-    document.title = this.$route.meta?.title;
-  }
-  @Watch("$route")
-  changeTitle() {
     document.title = this.$route.meta?.title;
   }
 }

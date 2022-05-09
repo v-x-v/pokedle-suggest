@@ -1,3 +1,4 @@
+import { LetterColor } from "@/types/pokedle";
 import Vue from "vue";
 import Vuex from "vuex";
 import { Module, ActionContext } from "vuex";
@@ -29,12 +30,12 @@ interface KeyboardState {
   /** 表示中のキーボード表示文字リスト */
   letters: string[][];
   /** 入力中文字列 */
-  typingLetters: Record<string, string>[];
+  typingLetters: LetterColor[];
 }
 
 class KeyboardModule implements Module<KeyboardState, any> {
   namespaced = true;
-  state = {
+  state: KeyboardState = {
     mode: "normal", // デフォルトは通常モード
     letters: LETTERS_NORMAL,
     typingLetters: [],

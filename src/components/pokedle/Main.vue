@@ -95,6 +95,8 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import store from "@/store";
+import { LetterColor, LetterCount, PokeJson } from "@/types/pokedle";
+
 @Component
 export default class PokedleMain extends Vue {
   suggestHeaders = [
@@ -108,16 +110,16 @@ export default class PokedleMain extends Vue {
   /**
    * 入力済み文字列リスト
    */
-  get registeredList(): Record<string, unknown>[][] {
+  get registeredList(): LetterColor[][] {
     return this.$store.state.app.registeredList;
   }
   /**
    * 推測リスト
    */
-  get suggestList(): Record<string, any>[] {
+  get suggestList(): PokeJson[] {
     return this.$store.state.app.suggestList;
   }
-  get charList(): Record<string, any>[] {
+  get charList(): LetterCount[] {
     return this.$store.state.app.charList;
   }
   /**
