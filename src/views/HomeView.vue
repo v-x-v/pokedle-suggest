@@ -1,8 +1,5 @@
 <template>
-  <div class="home">
-    <PokedleMain />
-    <Keyboard />
-  </div>
+  <div class="home">Home</div>
 </template>
 
 <script lang="ts">
