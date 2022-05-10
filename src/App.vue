@@ -1,9 +1,8 @@
 <template>
   <v-app id="inspire">
-    <v-navigation-drawer app>
-      <v-sheet color="grey lighten-4" class="pa-4">
-        <v-avatar class="mb-4" color="grey darken-1" size="64">TODO</v-avatar>
-        <div>v-x-v tools</div>
+    <v-navigation-drawer app permanent :mini-variant="isHiddenMenu">
+      <v-sheet color="grey lighten-4" class="d-flex align-center pa-4">
+        <v-icon @click="switchMenu">mdi-menu</v-icon>
       </v-sheet>
 
       <v-divider></v-divider>
@@ -14,7 +13,10 @@
           :key="menuItem.path"
           :link="currentURL === menuItem.path ? false : true"
           :href="currentURL === menuItem.path ? '' : baseURL + menuItem.path"
-          :color="currentURL === menuItem.path ? 'grey darken-2' : ''"
+          class="pl-0"
+          :style="
+            currentURL === menuItem.path ? 'background-color: #E3F2FD;' : ''
+          "
         >
           <v-list-item-icon>
             <v-icon
@@ -24,6 +26,7 @@
           </v-list-item-icon>
           <v-list-item-action-text
             v-text="menuItem.name"
+            class="text-body-2"
           ></v-list-item-action-text>
         </v-list-item>
       </v-list>
@@ -37,12 +40,13 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import store from "./store";
 import routes from "@/router/routes";
 import { RouteConfig } from "vue-router";
 
 @Component
 export default class App extends Vue {
+  isHiddenMenu = false;
+
   get baseURL(): string {
     return process.env.BASE_URL.slice(0, -1);
   }
@@ -52,8 +56,8 @@ export default class App extends Vue {
   get menuItems(): Array<RouteConfig> {
     return routes;
   }
-  click() {
-    store.commit("app/switchDrawer");
+  switchMenu(): void {
+    this.isHiddenMenu = !this.isHiddenMenu;
   }
   mounted() {
     document.title = this.$route.meta?.title;
